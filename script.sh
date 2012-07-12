@@ -4,6 +4,10 @@
 # @see https://github.com/e36freak/tools/blob/master/options.bash
 
 # Preamble {{{
+
+# Exit immediately on error
+set -e
+
 version="$0 v0.1"
 
 # Detect whether output is piped or not.
@@ -38,6 +42,11 @@ Description of this script.
   -h, --help        Display this help and exit
       --version     Output version information and exit
 "
+}
+
+# Set a trap for cleaning up in case of errors or when script exits.
+rollback() {
+  die "Unexpected failure."
 }
 
 # }}}
@@ -156,6 +165,15 @@ done
 set -- "${options[@]}"
 unset options
 
+# Set our rollback function for unexpected exits.
+trap rollback INT TERM EXIT
+
+# A non-destructive exit for when the script exits naturally.
+safe_exit() {
+  trap - INT TERM EXIT
+  exit
+}
+
 # }}}
 # Main loop {{{
 
@@ -166,9 +184,9 @@ unset options
 # Read the options and set stuff
 while [[ $1 = -?* ]]; do
   case $1 in
-    -h|--help) usage >&2; exit 0 ;;
-    -V|--version) out "$version"; exit 0 ;;
-    -u|--username) shift; password=$1 ;;
+    -h|--help) usage >&2; safe_exit ;;
+    -V|--version) out "$version"; safe_exit ;;
+    -u|--username) shift; username=$1 ;;
     -p|--password) shift; password=$1 ;;
     -v|--verbose) verbose=1 ;;
     -q|--quiet) quiet=1 ;;
@@ -186,8 +204,14 @@ files+=("$@")
 # }}}
 # Let the logic begin! {{{
 
+# Uncomment this line if the script requires root privileges.
+# [[ $UID -ne 0 ]] && die "You need to be root to run this script"
+
 if ((interactive)); then
   prompt_options
 fi
+
+# This has to be run last not to rollback changes we've made.
+safe_exit
 
 # }}}
