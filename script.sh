@@ -8,8 +8,6 @@
 # Exit immediately on error
 set -e
 
-version="$0 v0.1"
-
 # Detect whether output is piped or not.
 [[ -t 1 ]] && piped=0 || piped=1
 
@@ -18,36 +16,7 @@ force=0
 quiet=0
 verbose=0
 interactive=0
-files=()
-
-# A list of all variables to prompt in interactive mode. These variables HAVE
-# to be named exactly as the longname option definition in usage().
-interactive_opts=(username password)
-
-
-# Print usage
-usage() {
-  echo -n "$0 [OPTION]... [FILE]...
-
-Description of this script.
-
- Options:
-  -u, --username    Username for script
-  -p, --password    Input user password, it's recommended to insert
-                    this through the interactive option
-  -f, --force       Skip all user interaction
-  -i, --interactive Prompt for values
-  -q, --quiet       Quiet (no output)
-  -v, --verbose     Output more
-  -h, --help        Display this help and exit
-      --version     Output version information and exit
-"
-}
-
-# Set a trap for cleaning up in case of errors or when script exits.
-rollback() {
-  die "Unexpected failure."
-}
+args=()
 
 # }}}
 # Helpers {{{
@@ -84,6 +53,44 @@ confirm() {
 
   read -p "$1 [Y/n] " -n 1;
   [[ $REPLY =~ ^[Yy]$ ]];
+}
+
+# }}}
+# Logic {{{
+
+version="$0 v0.1"
+
+# A list of all variables to prompt in interactive mode. These variables HAVE
+# to be named exactly as the longname option definition in usage().
+interactive_opts=(username password)
+
+# Print usage
+usage() {
+  echo -n "$0 [OPTION]... [FILE]...
+
+Description of this script.
+
+ Options:
+  -u, --username    Username for script
+  -p, --password    Input user password, it's recommended to insert
+                    this through the interactive option
+  -f, --force       Skip all user interaction
+  -i, --interactive Prompt for values
+  -q, --quiet       Quiet (no output)
+  -v, --verbose     Output more
+  -h, --help        Display this help and exit
+      --version     Output version information and exit
+"
+}
+
+# Set a trap for cleaning up in case of errors or when script exits.
+rollback() {
+  die "Unexpected failure."
+}
+
+# Put your script here
+main() {
+  echo -n
 }
 
 # }}}
@@ -180,7 +187,6 @@ safe_exit() {
 # Print help if no arguments were passed.
 [[ $# -eq 0 ]] && set -- "--help"
 
-
 # Read the options and set stuff
 while [[ $1 = -?* ]]; do
   case $1 in
@@ -202,7 +208,7 @@ done
 files+=("$@")
 
 # }}}
-# Let the logic begin! {{{
+# Let the actual script begin {{{
 
 # Uncomment this line if the script requires root privileges.
 # [[ $UID -ne 0 ]] && die "You need to be root to run this script"
@@ -210,6 +216,9 @@ files+=("$@")
 if ((interactive)); then
   prompt_options
 fi
+
+# You should delegate your logic from the `main` function
+main
 
 # This has to be run last not to rollback changes we've made.
 safe_exit
