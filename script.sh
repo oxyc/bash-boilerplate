@@ -190,7 +190,4 @@ if ((interactive)); then
   prompt_options
 fi
 
-err "test"
-success "oheo"
-
 # }}}
