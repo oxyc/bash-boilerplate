@@ -204,8 +204,8 @@ while [[ $1 = -?* ]]; do
   shift
 done
 
-# Append all arguments to the files array.
-files+=("$@")
+# Store the remaining part as arguments.
+args+=("$@")
 
 # }}}
 # Let the actual script begin {{{
