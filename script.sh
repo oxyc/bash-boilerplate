@@ -56,7 +56,7 @@ confirm() {
 }
 
 # }}}
-# Logic {{{
+# Script logic -- TOUCH THIS {{{
 
 version="$0 v0.1"
 
@@ -208,7 +208,7 @@ done
 args+=("$@")
 
 # }}}
-# Let the actual script begin {{{
+# Run it {{{
 
 # Uncomment this line if the script requires root privileges.
 # [[ $UID -ne 0 ]] && die "You need to be root to run this script"
