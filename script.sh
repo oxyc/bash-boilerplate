@@ -11,6 +11,7 @@ version="$0 v0.1"
 
 # Defaults
 force=0
+quiet=0
 verbose=0
 interactive=0
 files=()
@@ -32,6 +33,7 @@ Description of this script.
                     this through the interactive option
   -f, --force       Skip all user interaction
   -i, --interactive Prompt for values
+  -q, --quiet       Quiet (no output)
   -v, --verbose     Output more
   -h, --help        Display this help and exit
       --version     Output version information and exit
@@ -42,6 +44,8 @@ Description of this script.
 # Helpers {{{
 
 out() {
+  ((quiet)) && return
+
   local message="$@"
   if ((piped)); then
     message=$(echo $message | sed '
@@ -167,6 +171,7 @@ while [[ $1 = -?* ]]; do
     -u|--username) shift; password=$1 ;;
     -p|--password) shift; password=$1 ;;
     -v|--verbose) verbose=1 ;;
+    -q|--quiet) quiet=1 ;;
     -i|--interactive) interactive=1 ;;
     -f|--force) force=1 ;;
     --endopts) shift; break ;;
