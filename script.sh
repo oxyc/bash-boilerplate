@@ -41,21 +41,20 @@ Description of this script.
 # }}}
 # Helpers {{{
 
-# Unless piped, prepend a colorized string to output
-out_color() {
-  if ((!piped)); then
-    local colorized="$1"
-  else
-    local colorzed=""
+out() {
+  local message="$@"
+  if ((piped)); then
+    message=$(echo $message | sed '
+      s/\\[0-9]\{3\}\[[0-9]\(;[0-9]\{2\}\)\?m//g;
+      s/✖/Error:/g;
+      s/✔/Success:/g;
+    ')
   fi
-  shift
-  printf '%b%s\n' "$colorized" "$@"
+  printf '%b\n' "$message";
 }
-
-die() { printf '%s\n' "$@"; exit 1; } >&2
-out() { printf '%s\n' "$@"; }
-err() { out_color " \033[1;31m✖\033[0m  " "$@"; }
-success() { out_color " \033[1;32m✔\033[0m  " "$@"; }
+die() { out "$@"; exit 1; } >&2
+err() { out " \033[1;31m✖\033[0m  $@"; } >&2
+success() { out " \033[1;32m✔\033[0m  $@"; }
 
 # Verbose logging
 log() { (($verbose)) && out "$@"; }
@@ -185,5 +184,8 @@ files+=("$@")
 if ((interactive)); then
   prompt_options
 fi
+
+err "test"
+success "oheo"
 
 # }}}
