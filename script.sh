@@ -58,7 +58,7 @@ confirm() {
 # }}}
 # Script logic -- TOUCH THIS {{{
 
-version="$0 v0.1"
+version="v0.1"
 
 # A list of all variables to prompt in interactive mode. These variables HAVE
 # to be named exactly as the longname option definition in usage().
@@ -66,7 +66,7 @@ interactive_opts=(username password)
 
 # Print usage
 usage() {
-  echo -n "$0 [OPTION]... [FILE]...
+  echo -n "$(basename $0) [OPTION]... [FILE]...
 
 Description of this script.
 
@@ -85,7 +85,7 @@ Description of this script.
 
 # Set a trap for cleaning up in case of errors or when script exits.
 rollback() {
-  die "Unexpected failure."
+  die
 }
 
 # Put your script here
@@ -191,7 +191,7 @@ safe_exit() {
 while [[ $1 = -?* ]]; do
   case $1 in
     -h|--help) usage >&2; safe_exit ;;
-    -V|--version) out "$version"; safe_exit ;;
+    --version) out "$(basename $0) $version"; safe_exit ;;
     -u|--username) shift; username=$1 ;;
     -p|--password) shift; password=$1 ;;
     -v|--verbose) verbose=1 ;;
