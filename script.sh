@@ -49,9 +49,9 @@ escape() { echo $@ | sed 's/\//\\\//g'; }
 
 # Unless force is used, confirm with user
 confirm() {
-  (($force)) && return 1;
+  (($force)) && return 0;
 
-  read -p "$1 [Y/n] " -n 1;
+  read -p "$1 [y/N] " -n 1;
   [[ $REPLY =~ ^[Yy]$ ]];
 }
 
